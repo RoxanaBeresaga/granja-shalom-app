@@ -34,10 +34,12 @@ export default function CheckoutScreen({
     customer.name.trim() && customer.phone.trim() && customer.email.trim()
 
   return (
-    <div className="animate-rise space-y-6 px-4 py-5 pb-40">
+    <div className="animate-rise space-y-6 px-4 py-5 pb-40 md:px-6 lg:mx-auto lg:grid lg:max-w-6xl lg:grid-cols-2 lg:items-start lg:gap-8 lg:space-y-0 lg:px-8 lg:py-10 lg:pb-10">
+      <div className="lg:col-span-2">
       <CheckoutStepper current={valid ? 1 : 0} />
+      </div>
 
-      <section className="space-y-3">
+      <section className="space-y-3 lg:rounded-3xl lg:bg-white lg:p-6 lg:shadow-sm lg:ring-1 lg:ring-black/5">
         <h2 className="font-display text-lg font-bold text-shalom-forest">
           Tus datos
         </h2>
@@ -69,6 +71,7 @@ export default function CheckoutScreen({
         />
       </section>
 
+      <div className="space-y-6">
       <section className="space-y-3">
         <h2 className="font-display text-lg font-bold text-shalom-forest">
           Entrega
@@ -142,8 +145,9 @@ export default function CheckoutScreen({
         <div className="my-2 border-t border-dashed border-black/10" />
         <Row label="Total" value={ars(total)} strong />
       </section>
+      </div>
 
-      <div className="absolute inset-x-0 bottom-0 border-t border-black/5 bg-shalom-cream/95 p-4 backdrop-blur-md">
+      <div className="absolute inset-x-0 bottom-0 border-t border-black/5 bg-shalom-cream/95 p-4 backdrop-blur-md lg:static lg:col-start-2 lg:bg-transparent lg:p-0 lg:backdrop-blur-none">
         <PrimaryButton onClick={onContinue} disabled={!valid}>
           {valid ? 'Ir a pagar' : 'Completá tus datos'}
         </PrimaryButton>
@@ -151,4 +155,3 @@ export default function CheckoutScreen({
     </div>
   )
 }
-

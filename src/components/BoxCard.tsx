@@ -61,7 +61,7 @@ export default function BoxCard({
           src={box.image}
           alt={`Foto de ${box.name}`}
           className={`w-full bg-shalom-mist object-cover transition-transform duration-[900ms] ease-out group-hover:scale-110 ${
-            featured ? 'h-44' : 'h-52'
+            featured ? 'h-44 md:h-52' : 'h-52 md:h-56'
           }`}
         />
         {/* shine sweep on hover — the signature wow moment */}
@@ -111,4 +111,3 @@ export default function BoxCard({
 }
 
 /* -------------------------------- primitives ------------------------------ */
-

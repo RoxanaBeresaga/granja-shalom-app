@@ -1,4 +1,5 @@
 import PrimaryButton from '../components/PrimaryButton'
+import QtyBtn from '../components/QtyButton'
 import type { Box } from '../types'
 import { formatCurrency as ars } from '../utils/currency'
 
@@ -14,12 +15,12 @@ export default function DetailScreen({
   onAdd: () => void
 }) {
   return (
-    <div className="animate-rise pb-32">
-      <div className="relative">
+    <div className="animate-rise pb-32 lg:mx-auto lg:grid lg:max-w-7xl lg:grid-cols-2 lg:gap-10 lg:px-8 lg:py-10 lg:pb-10">
+      <div className="relative lg:overflow-hidden lg:rounded-3xl">
         <img
           src={box.image.replace('w=900&h=900', 'w=1000&h=760')}
           alt={`Foto de ${box.name}`}
-          className="h-72 w-full bg-shalom-mist object-cover"
+          className="h-72 w-full bg-shalom-mist object-cover md:h-96 lg:h-full lg:min-h-[620px]"
         />
         <span
           className="absolute left-4 top-4 rounded-full px-3 py-1 text-xs font-bold text-white shadow-lg"
@@ -29,7 +30,7 @@ export default function DetailScreen({
         </span>
       </div>
 
-      <div className="px-5 pt-5">
+      <div className="px-5 pt-5 lg:px-0 lg:pt-4">
         <div className="flex items-start justify-between gap-3">
           <div>
             <h1 className="font-display text-2xl font-extrabold text-shalom-forest">
@@ -45,7 +46,7 @@ export default function DetailScreen({
         <h2 className="mt-6 font-display text-lg font-bold text-shalom-forest">
           Qué trae
         </h2>
-        <div className="mt-3 grid grid-cols-2 gap-2.5">
+        <div className="mt-3 grid grid-cols-2 gap-2.5 md:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3">
           {box.contents.map((c, i) => (
             <div
               key={c.name + i}
@@ -68,8 +69,8 @@ export default function DetailScreen({
       </div>
 
       {/* sticky add bar */}
-      <div className="absolute inset-x-0 bottom-0 border-t border-black/5 bg-shalom-cream/95 p-4 backdrop-blur-md">
-        <div className="mx-auto flex max-w-[430px] items-center gap-3">
+      <div className="absolute inset-x-0 bottom-0 border-t border-black/5 bg-shalom-cream/95 p-4 backdrop-blur-md lg:static lg:col-start-2 lg:mt-6 lg:border-0 lg:bg-transparent lg:p-0 lg:backdrop-blur-none">
+        <div className="mx-auto flex max-w-md items-center gap-3 lg:mx-0 lg:max-w-none">
           <div className="flex items-center gap-1 rounded-2xl bg-white p-1 shadow-sm ring-1 ring-black/10">
             <QtyBtn onClick={() => setQty(Math.max(1, qty - 1))}>–</QtyBtn>
             <span className="w-8 text-center font-display text-lg font-bold text-shalom-forest">
@@ -88,4 +89,3 @@ export default function DetailScreen({
     </div>
   )
 }
-

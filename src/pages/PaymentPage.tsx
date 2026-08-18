@@ -48,7 +48,7 @@ export default function PaymentScreen({
 
   if (mpState !== 'idle') {
     return (
-      <div className="animate-rise flex h-full flex-col items-center justify-center px-8 text-center">
+      <div className="animate-rise flex h-full min-h-[60vh] flex-col items-center justify-center px-8 text-center">
         {mpState === 'redirecting' ? (
           <>
             <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[#009ee3] text-2xl text-white shadow-lg">
@@ -80,7 +80,8 @@ export default function PaymentScreen({
   }
 
   return (
-    <div className="animate-rise space-y-5 px-4 py-5 pb-40">
+    <div className="animate-rise space-y-5 px-4 py-5 pb-40 md:px-6 lg:mx-auto lg:grid lg:max-w-5xl lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start lg:gap-8 lg:space-y-0 lg:px-8 lg:py-10 lg:pb-10">
+      <div className="space-y-5">
       <CheckoutStepper current={2} />
 
       <div className="rounded-2xl bg-shalom-forest p-4 text-white">
@@ -199,8 +200,13 @@ export default function PaymentScreen({
           </p>
         </div>
       )}
+      </div>
 
-      <div className="absolute inset-x-0 bottom-0 border-t border-black/5 bg-shalom-cream/95 p-4 backdrop-blur-md">
+      <div className="absolute inset-x-0 bottom-0 border-t border-black/5 bg-shalom-cream/95 p-4 backdrop-blur-md lg:static lg:rounded-3xl lg:border-0 lg:bg-white lg:p-6 lg:shadow-sm lg:ring-1 lg:ring-black/5 lg:backdrop-blur-none">
+        <div className="mb-4 hidden lg:block">
+          <span className="text-sm text-shalom-ink/60">Total a pagar</span>
+          <div className="font-display text-3xl font-extrabold text-shalom-forest">{ars(total)}</div>
+        </div>
         <PrimaryButton
           onClick={payment === 'mp' ? startMp : onPay}
           disabled={payment === 'transfer' && !receipt}
@@ -215,4 +221,3 @@ export default function PaymentScreen({
     </div>
   )
 }
-

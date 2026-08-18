@@ -80,17 +80,25 @@ export default function App() {
 
   const scrollRef = useRef<HTMLDivElement>(null)
   function scrollTop() {
-    window.requestAnimationFrame(() => scrollRef.current?.scrollTo(0, 0))
+    window.requestAnimationFrame(() => {
+      scrollRef.current?.scrollTo(0, 0)
+      window.scrollTo(0, 0)
+    })
   }
 
   return (
-    <div className="flex min-h-screen w-full items-center justify-center bg-[#d9e4cf] p-0 sm:p-6">
-      {/* phone frame */}
-      <div className="relative flex h-screen w-full max-w-[430px] flex-col overflow-hidden bg-shalom-cream shadow-2xl sm:h-[900px] sm:rounded-[2.5rem] sm:ring-8 sm:ring-black/80">
+    <div className="min-h-screen w-full bg-shalom-cream lg:bg-[#d9e4cf] lg:p-6">
+      <div className="relative mx-auto flex h-screen w-full flex-col overflow-hidden bg-shalom-cream lg:h-auto lg:min-h-[calc(100vh-3rem)] lg:max-w-[1440px] lg:overflow-visible lg:rounded-[2rem] lg:shadow-2xl lg:ring-1 lg:ring-black/5">
         <Header
           title={screenTitle(screen)}
           onBack={screen === 'home' ? undefined : () => backFrom(screen)}
           cartCount={cartCount}
+          screen={screen}
+          onHome={() => {
+            setScreen('home')
+            scrollTop()
+          }}
+          onCatalog={goCatalog}
           onCart={() => {
             setScreen('cart')
             scrollTop()
@@ -99,7 +107,7 @@ export default function App() {
 
         <div
           ref={scrollRef}
-          className="scroll-area relative flex-1 overflow-y-auto overscroll-contain"
+          className="scroll-area relative flex-1 overflow-y-auto overscroll-contain lg:overflow-visible"
         >
           {screen === 'home' && <HomeScreen onShop={goCatalog} onOpen={goDetail} />}
           {screen === 'catalog' && (
@@ -175,7 +183,7 @@ export default function App() {
 
         {/* add-to-cart toast */}
         {justAdded && (
-          <div className="animate-pop pointer-events-none absolute bottom-6 left-1/2 z-40 -translate-x-1/2 rounded-full bg-shalom-forest px-5 py-2.5 text-sm font-semibold text-white shadow-xl">
+          <div className="animate-pop pointer-events-none absolute bottom-6 left-1/2 z-40 -translate-x-1/2 rounded-full bg-shalom-forest px-5 py-2.5 text-sm font-semibold text-white shadow-xl lg:fixed">
             ✓ Agregado al carrito
           </div>
         )}

@@ -18,7 +18,7 @@ export default function CartScreen({
 }) {
   if (lines.length === 0)
     return (
-      <div className="animate-rise flex h-full flex-col items-center justify-center px-8 text-center">
+      <div className="animate-rise flex h-full min-h-[60vh] flex-col items-center justify-center px-8 text-center">
         <div className="text-5xl">🧺</div>
         <h2 className="mt-4 font-display text-xl font-bold text-shalom-forest">
           Tu carrito está vacío
@@ -33,17 +33,17 @@ export default function CartScreen({
     )
 
   return (
-    <div className="animate-rise pb-60">
-      <div className="space-y-3 px-4 py-5">
+    <div className="animate-rise pb-60 lg:mx-auto lg:grid lg:max-w-6xl lg:grid-cols-[minmax(0,1fr)_360px] lg:items-start lg:gap-8 lg:px-8 lg:py-10 lg:pb-10">
+      <div className="space-y-3 px-4 py-5 lg:px-0 lg:py-0">
         {lines.map(({ box, qty }) => (
           <div
             key={box.id}
-            className="flex gap-3 rounded-3xl bg-white p-3 shadow-sm ring-1 ring-black/5"
+            className="flex gap-3 rounded-3xl bg-white p-3 shadow-sm ring-1 ring-black/5 md:gap-5 md:p-4"
           >
             <img
               src={box.image}
               alt={box.name}
-              className="h-20 w-20 shrink-0 rounded-2xl bg-shalom-mist object-cover"
+              className="h-20 w-20 shrink-0 rounded-2xl bg-shalom-mist object-cover md:h-28 md:w-28"
             />
             <div className="flex flex-1 flex-col">
               <div className="flex items-start justify-between">
@@ -78,7 +78,7 @@ export default function CartScreen({
         ))}
       </div>
 
-      <div className="absolute inset-x-0 bottom-0 space-y-3 border-t border-black/5 bg-shalom-cream/95 p-4 backdrop-blur-md">
+      <div className="absolute inset-x-0 bottom-0 space-y-3 border-t border-black/5 bg-shalom-cream/95 p-4 backdrop-blur-md lg:static lg:rounded-3xl lg:border-0 lg:bg-white lg:p-6 lg:shadow-sm lg:ring-1 lg:ring-black/5 lg:backdrop-blur-none">
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] font-semibold text-shalom-ink/60">
           <span>🌿 Agroecológico</span>
           <span>📍 Local</span>
@@ -103,4 +103,3 @@ export default function CartScreen({
     </div>
   )
 }
-

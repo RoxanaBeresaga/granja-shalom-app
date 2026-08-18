@@ -14,7 +14,7 @@ export default function WhatsAppFab({ bottom }: { bottom: number }) {
   return (
     <div
       style={{ bottom }}
-      className="absolute right-4 z-40 flex flex-col items-end gap-3 transition-[bottom] duration-300"
+      className="absolute right-4 z-40 flex flex-col items-end gap-3 transition-[bottom] duration-300 lg:fixed lg:!bottom-6 lg:right-6"
     >
       {open && (
         <div className="animate-pop w-60 rounded-2xl rounded-br-md bg-white p-4 shadow-xl ring-1 ring-black/5">
@@ -55,4 +55,3 @@ export default function WhatsAppFab({ bottom }: { bottom: number }) {
     </div>
   )
 }
-

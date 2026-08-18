@@ -27,8 +27,8 @@ export default function ConfirmationScreen({
 }) {
   const zoneLabel = DELIVERY_ZONES.find((z) => z.id === zone)?.label
   return (
-    <div className="animate-rise px-4 py-8 pb-10">
-      <div className="flex flex-col items-center text-center">
+    <div className="animate-rise mx-auto max-w-5xl px-4 py-8 pb-10 md:px-6 lg:grid lg:grid-cols-[0.9fr_1.1fr] lg:items-start lg:gap-8 lg:px-8 lg:py-12">
+      <div className="flex flex-col items-center text-center lg:sticky lg:top-24 lg:pt-6">
         <div className="animate-pop flex h-20 w-20 items-center justify-center rounded-full bg-shalom-lime text-4xl">
           🌱
         </div>
@@ -52,7 +52,7 @@ export default function ConfirmationScreen({
         )}
       </div>
 
-      <div className="mt-7 rounded-3xl bg-white p-4 shadow-sm ring-1 ring-black/5">
+      <div className="mt-7 rounded-3xl bg-white p-4 shadow-sm ring-1 ring-black/5 lg:mt-0 lg:p-6">
         <h2 className="font-display font-bold text-shalom-forest">Resumen</h2>
         <div className="mt-3 space-y-2">
           {lines.map(({ box, qty }) => (
@@ -82,7 +82,7 @@ export default function ConfirmationScreen({
         </a>
       </div>
 
-      <div className="mt-4 space-y-2 rounded-3xl bg-shalom-forest p-5 text-sm text-white/85">
+      <div className="mt-4 space-y-2 rounded-3xl bg-shalom-forest p-5 text-sm text-white/85 lg:col-start-2">
         <div className="flex justify-between">
           <span className="text-white/60">Entrega</span>
           <span className="text-right font-semibold text-white">
@@ -105,7 +105,7 @@ export default function ConfirmationScreen({
         </div>
       </div>
 
-      <div className="mt-4 flex items-start gap-2.5 rounded-2xl bg-white/70 px-4 py-3 text-sm leading-relaxed text-shalom-ink/75 ring-1 ring-black/5">
+      <div className="mt-4 flex items-start gap-2.5 rounded-2xl bg-white/70 px-4 py-3 text-sm leading-relaxed text-shalom-ink/75 ring-1 ring-black/5 lg:col-start-2">
         <span className="text-lg">🤝</span>
         <span>
           {payment === 'mp'
@@ -114,10 +114,9 @@ export default function ConfirmationScreen({
         </span>
       </div>
 
-      <div className="mt-6">
+      <div className="mt-6 lg:col-start-2">
         <PrimaryButton onClick={onHome}>Volver al inicio</PrimaryButton>
       </div>
     </div>
   )
 }
-
