@@ -1,0 +1,105 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+@import 'tailwindcss';
+
+@theme {
+  --font-display: 'Outfit', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+
+  --color-shalom-leaf: #1f7a3f;
+  --color-shalom-forest: #0f3d24;
+  --color-shalom-lime: #7cc043;
+  --color-shalom-cream: #f6f4ea;
+  --color-shalom-clay: #e2662f;
+  --color-shalom-clay-soft: #f7d7c6;
+  --color-shalom-ink: #16241b;
+  --color-shalom-mist: #eef2e6;
+}
+
+:root {
+  color-scheme: light;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  background-color: #d9e4cf;
+  color: var(--color-shalom-ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--color-shalom-lime);
+  color: var(--color-shalom-forest);
+}
+
+/* Hide scrollbars until scrolling */
+.scroll-area {
+  scrollbar-width: none;
+}
+.scroll-area::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+@keyframes shalom-rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-rise {
+  animation: shalom-rise 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes shalom-shine {
+  from {
+    transform: translateX(-120%) skewX(-18deg);
+  }
+  to {
+    transform: translateX(320%) skewX(-18deg);
+  }
+}
+
+@keyframes shalom-badge-in {
+  0% {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.85);
+  }
+  60% {
+    transform: translateY(0) scale(1.08);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+.animate-badge-in {
+  animation: shalom-badge-in 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes shalom-pop {
+  0% {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.12);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+.animate-pop {
+  animation: shalom-pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
