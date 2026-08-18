@@ -1,0 +1,218 @@
+import { useState } from 'react'
+import CheckoutStepper from '../components/CheckoutStepper'
+import PrimaryButton from '../components/PrimaryButton'
+import type { PaymentMethod } from '../types'
+import { formatCurrency as ars } from '../utils/currency'
+
+export default function PaymentScreen({
+  payment,
+  setPayment,
+  total,
+  receipt,
+  setReceipt,
+  onPay,
+}: {
+  payment: PaymentMethod
+  setPayment: (p: PaymentMethod) => void
+  total: number
+  receipt: string | null
+  setReceipt: (r: string | null) => void
+  onPay: () => void
+}) {
+  const [mpState, setMpState] = useState<'idle' | 'redirecting' | 'success'>(
+    'idle',
+  )
+  const [copied, setCopied] = useState(false)
+  const [dragging, setDragging] = useState(false)
+
+  const copyAlias = async () => {
+    try {
+      await navigator.clipboard.writeText('granja.shalom.bb')
+    } catch {
+      /* clipboard puede no estar disponible en el preview */
+    }
+    setCopied(true)
+    window.setTimeout(() => setCopied(false), 1800)
+  }
+
+  const takeFile = (file?: File) => {
+    if (!file) return
+    setReceipt(file.name)
+  }
+
+  const startMp = () => {
+    setMpState('redirecting')
+    window.setTimeout(() => setMpState('success'), 1900)
+    window.setTimeout(() => onPay(), 3100)
+  }
+
+  if (mpState !== 'idle') {
+    return (
+      <div className="animate-rise flex h-full flex-col items-center justify-center px-8 text-center">
+        {mpState === 'redirecting' ? (
+          <>
+            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[#009ee3] text-2xl text-white shadow-lg">
+              💳
+            </div>
+            <div className="mt-6 h-8 w-8 animate-spin rounded-full border-[3px] border-shalom-mist border-t-shalom-leaf" />
+            <h2 className="mt-5 font-display text-lg font-bold text-shalom-forest">
+              Redirigiendo a Mercado Pago…
+            </h2>
+            <p className="mt-1 text-sm text-shalom-ink/60">
+              No cierres esta ventana, estamos procesando el pago.
+            </p>
+          </>
+        ) : (
+          <>
+            <div className="animate-pop flex h-20 w-20 items-center justify-center rounded-full bg-shalom-lime text-4xl">
+              ✓
+            </div>
+            <h2 className="mt-5 font-display text-xl font-extrabold text-shalom-forest">
+              ¡Pago aprobado!
+            </h2>
+            <p className="mt-1 text-sm text-shalom-ink/60">
+              Estamos generando tu pedido…
+            </p>
+          </>
+        )}
+      </div>
+    )
+  }
+
+  return (
+    <div className="animate-rise space-y-5 px-4 py-5 pb-40">
+      <CheckoutStepper current={2} />
+
+      <div className="rounded-2xl bg-shalom-forest p-4 text-white">
+        <span className="text-sm text-white/70">Total a pagar</span>
+        <div className="font-display text-3xl font-extrabold">{ars(total)}</div>
+      </div>
+
+      <h2 className="font-display text-lg font-bold text-shalom-forest">
+        ¿Cómo querés pagar?
+      </h2>
+
+      <button
+        onClick={() => setPayment('mp')}
+        className={`w-full rounded-2xl border-2 p-4 text-left transition-all ${
+          payment === 'mp'
+            ? 'border-shalom-leaf bg-white shadow-md'
+            : 'border-transparent bg-white/60'
+        }`}
+      >
+        <div className="flex items-center gap-3">
+          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#009ee3] text-lg">
+            💳
+          </span>
+          <div>
+            <div className="font-display font-bold text-shalom-forest">
+              Mercado Pago
+            </div>
+            <div className="text-sm text-shalom-ink/60">
+              Tarjeta, dinero en cuenta o QR
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <button
+        onClick={() => setPayment('transfer')}
+        className={`w-full rounded-2xl border-2 p-4 text-left transition-all ${
+          payment === 'transfer'
+            ? 'border-shalom-leaf bg-white shadow-md'
+            : 'border-transparent bg-white/60'
+        }`}
+      >
+        <div className="flex items-center gap-3">
+          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-shalom-mist text-lg">
+            🏦
+          </span>
+          <div>
+            <div className="font-display font-bold text-shalom-forest">
+              Transferencia bancaria
+            </div>
+            <div className="text-sm text-shalom-ink/60">
+              Con alias y comprobante
+            </div>
+          </div>
+        </div>
+      </button>
+
+      {payment === 'transfer' && (
+        <div className="animate-rise space-y-3 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-black/5">
+          <div>
+            <span className="text-xs font-semibold uppercase tracking-wide text-shalom-ink/50">
+              Alias
+            </span>
+            <button
+              onClick={copyAlias}
+              className="mt-1 flex w-full items-center justify-between rounded-xl bg-shalom-mist px-3 py-2.5 transition-colors hover:bg-shalom-lime/40"
+            >
+              <span className="font-display font-bold text-shalom-forest">
+                granja.shalom.bb
+              </span>
+              <span className="text-xs font-semibold text-shalom-leaf">
+                {copied ? '✓ Copiado' : 'Copiar'}
+              </span>
+            </button>
+          </div>
+          <p className="text-xs text-shalom-ink/60">
+            Titular: Cooperativa Granja Shalom · CBU 000000000000000000000
+          </p>
+          <label
+            onDragOver={(e) => {
+              e.preventDefault()
+              setDragging(true)
+            }}
+            onDragLeave={() => setDragging(false)}
+            onDrop={(e) => {
+              e.preventDefault()
+              setDragging(false)
+              takeFile(e.dataTransfer.files?.[0])
+            }}
+            className={`block cursor-pointer rounded-xl border-2 border-dashed px-4 py-6 text-center transition-colors ${
+              dragging
+                ? 'border-shalom-leaf bg-shalom-lime/20'
+                : receipt
+                  ? 'border-shalom-leaf/60 bg-shalom-mist/60'
+                  : 'border-shalom-leaf/40 bg-shalom-mist/50 hover:bg-shalom-mist'
+            }`}
+          >
+            <input
+              type="file"
+              accept="image/*,application/pdf"
+              className="hidden"
+              onChange={(e) => takeFile(e.target.files?.[0])}
+            />
+            <div className="text-2xl">{receipt ? '✅' : '📎'}</div>
+            <div className="mt-1 text-sm font-semibold text-shalom-forest">
+              {receipt ? receipt : 'Arrastrá tu comprobante acá'}
+            </div>
+            <div className="text-xs text-shalom-ink/50">
+              {receipt
+                ? 'Tocá para cambiar el archivo'
+                : 'o tocá para elegir · JPG, PNG o PDF (hasta 5 MB)'}
+            </div>
+          </label>
+          <p className="rounded-xl bg-shalom-clay-soft/60 px-3 py-2.5 text-xs leading-relaxed text-shalom-clay">
+            ⓘ Verificaremos tu comprobante en las próximas horas.
+          </p>
+        </div>
+      )}
+
+      <div className="absolute inset-x-0 bottom-0 border-t border-black/5 bg-shalom-cream/95 p-4 backdrop-blur-md">
+        <PrimaryButton
+          onClick={payment === 'mp' ? startMp : onPay}
+          disabled={payment === 'transfer' && !receipt}
+        >
+          {payment === 'mp'
+            ? 'Pagar con Mercado Pago'
+            : receipt
+              ? 'Confirmar pedido'
+              : 'Subí tu comprobante para continuar'}
+        </PrimaryButton>
+      </div>
+    </div>
+  )
+}
+
