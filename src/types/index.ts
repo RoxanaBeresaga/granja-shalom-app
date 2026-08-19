@@ -1,0 +1,10 @@
+export type Item = { emoji: string; name: string }
+export type Box = { id: string; name: string; tagline: string; price: number; count: number; image: string; accent: string; popular?: boolean; contents: Item[] }
+export type Screen = 'home' | 'catalog' | 'detail' | 'cart' | 'checkout' | 'payment' | 'confirmation'
+export type CartLine = { boxId: string; qty: number }
+export type Customer = { name: string; phone: string; email: string }
+export type Fulfillment = 'pickup' | 'delivery'
+export type PaymentMethod = 'mp' | 'transfer' | 'cash'
+export type OrderLine = { box: Box; qty: number }
+export type ConfirmedOrder = { lines: OrderLine[]; total: number }
+export type DeliveryZone = { id: string; label: string; cost: number }
