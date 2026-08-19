@@ -1,3 +1,5 @@
+import type { Screen } from '../types'
+
 export default function Header({
   title,
   onBack,
@@ -10,7 +12,7 @@ export default function Header({
   title: string
   onBack?: () => void
   cartCount: number
-  screen: string
+  screen: Screen
   onHome: () => void
   onCatalog: () => void
   onCart: () => void

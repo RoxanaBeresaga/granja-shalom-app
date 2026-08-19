@@ -1,4 +1,5 @@
-import { useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { Navigate, Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom'
 import Header from './components/Header'
 import WhatsAppFab from './components/WhatsApp'
 import { DELIVERY_ZONES } from './data/deliveryZones'
@@ -10,80 +11,74 @@ import ConfirmationScreen from './pages/ConfirmationPage'
 import HomeScreen from './pages/HomePage'
 import PaymentScreen from './pages/PaymentPage'
 import DetailScreen from './pages/ProductDetailPage'
-import type { CartLine, ConfirmedOrder, Customer, Fulfillment, PaymentMethod, Screen } from './types'
-import { previousScreen, screenTitle } from './utils/navigation'
+import type { CartLine, ConfirmedOrder, Customer, Fulfillment, PaymentMethod } from './types'
+import { backPath, screenFromPath, screenTitle } from './utils/navigation'
+
 export default function App() {
-  const [screen, setScreen] = useState<Screen>('home')
-  const [selectedId, setSelectedId] = useState<string>('cosecha')
+  const navigate = useNavigate()
+  const location = useLocation()
+  const screen = screenFromPath(location.pathname)
   const [cart, setCart] = useState<CartLine[]>([])
   const [detailQty, setDetailQty] = useState(1)
   const [justAdded, setJustAdded] = useState(false)
-
   const [customer, setCustomer] = useState<Customer>({ name: '', phone: '', email: '' })
   const [fulfillment, setFulfillment] = useState<Fulfillment>('pickup')
   const [zone, setZone] = useState(DELIVERY_ZONES[0].id)
   const [payment, setPayment] = useState<PaymentMethod>('mp')
   const [receipt, setReceipt] = useState<string | null>(null)
   const [confirmedOrder, setConfirmedOrder] = useState<ConfirmedOrder | null>(null)
-  const [orderId] = useState(() =>
-    'GS-' + Math.floor(1000 + Math.random() * 9000),
-  )
+  const [orderId] = useState(() => 'GS-' + Math.floor(1000 + Math.random() * 9000))
+  const scrollRef = useRef<HTMLDivElement>(null)
 
-  const box = BOXES.find((b) => b.id === selectedId)!
-  const cartCount = cart.reduce((n, l) => n + l.qty, 0)
-
+  const cartCount = cart.reduce((count, line) => count + line.qty, 0)
   const lines = useMemo(
-    () =>
-      cart
-        .map((l) => ({ box: BOXES.find((b) => b.id === l.boxId)!, qty: l.qty }))
-        .filter((l) => l.box),
+    () => cart
+      .map((line) => ({ box: BOXES.find((box) => box.id === line.boxId)!, qty: line.qty }))
+      .filter((line) => line.box),
     [cart],
   )
-  const subtotal = lines.reduce((s, l) => s + l.box.price * l.qty, 0)
-  const shipping =
-    fulfillment === 'delivery'
-      ? DELIVERY_ZONES.find((z) => z.id === zone)?.cost ?? 0
-      : 0
+  const subtotal = lines.reduce((sum, line) => sum + line.box.price * line.qty, 0)
+  const shipping = fulfillment === 'delivery'
+    ? DELIVERY_ZONES.find((deliveryZone) => deliveryZone.id === zone)?.cost ?? 0
+    : 0
   const total = subtotal + shipping
 
+  useEffect(() => {
+    window.requestAnimationFrame(() => {
+      scrollRef.current?.scrollTo(0, 0)
+      window.scrollTo(0, 0)
+    })
+  }, [location.pathname])
+
   const goDetail = (id: string) => {
-    setSelectedId(id)
     setDetailQty(1)
-    setScreen('detail')
-    scrollTop()
+    navigate(`/productos/${id}`)
   }
 
   const addToCart = (id: string, qty: number) => {
-    setCart((prev) => {
-      const found = prev.find((l) => l.boxId === id)
-      if (found)
-        return prev.map((l) => (l.boxId === id ? { ...l, qty: l.qty + qty } : l))
-      return [...prev, { boxId: id, qty }]
+    setCart((previous) => {
+      const found = previous.find((line) => line.boxId === id)
+      if (found) {
+        return previous.map((line) =>
+          line.boxId === id ? { ...line, qty: line.qty + qty } : line,
+        )
+      }
+      return [...previous, { boxId: id, qty }]
     })
     setJustAdded(true)
     window.setTimeout(() => setJustAdded(false), 1600)
   }
 
   const setQty = (id: string, qty: number) =>
-    setCart((prev) =>
-      qty <= 0
-        ? prev.filter((l) => l.boxId !== id)
-        : prev.map((l) => (l.boxId === id ? { ...l, qty } : l)),
+    setCart((previous) => qty <= 0
+      ? previous.filter((line) => line.boxId !== id)
+      : previous.map((line) => line.boxId === id ? { ...line, qty } : line),
     )
 
   const confirmOrder = () => {
     setConfirmedOrder({ lines, total })
     setCart([])
-    setScreen('confirmation')
-    scrollTop()
-  }
-
-  const scrollRef = useRef<HTMLDivElement>(null)
-  function scrollTop() {
-    window.requestAnimationFrame(() => {
-      scrollRef.current?.scrollTo(0, 0)
-      window.scrollTo(0, 0)
-    })
+    navigate(`/pedido/${orderId}`)
   }
 
   return (
@@ -91,97 +86,91 @@ export default function App() {
       <div className="relative mx-auto flex h-screen w-full flex-col overflow-hidden bg-shalom-cream lg:h-auto lg:min-h-[calc(100vh-3rem)] lg:max-w-[1440px] lg:overflow-visible lg:rounded-[2rem] lg:shadow-2xl lg:ring-1 lg:ring-black/5">
         <Header
           title={screenTitle(screen)}
-          onBack={screen === 'home' ? undefined : () => backFrom(screen)}
+          onBack={screen === 'home' ? undefined : () => navigate(backPath(screen))}
           cartCount={cartCount}
           screen={screen}
-          onHome={() => {
-            setScreen('home')
-            scrollTop()
-          }}
-          onCatalog={goCatalog}
-          onCart={() => {
-            setScreen('cart')
-            scrollTop()
-          }}
+          onHome={() => navigate('/')}
+          onCatalog={() => navigate('/productos')}
+          onCart={() => navigate('/carrito')}
         />
 
-        <div
-          ref={scrollRef}
-          className="scroll-area relative flex-1 overflow-y-auto overscroll-contain lg:overflow-visible"
-        >
-          {screen === 'home' && <HomeScreen onShop={goCatalog} onOpen={goDetail} />}
-          {screen === 'catalog' && (
-            <CatalogScreen onOpen={goDetail} onShop={goCatalog} />
-          )}
-          {screen === 'detail' && (
-            <DetailScreen
-              box={box}
-              qty={detailQty}
-              setQty={setDetailQty}
-              onAdd={() => {
-                addToCart(box.id, detailQty)
-                setScreen('cart')
-                scrollTop()
-              }}
+        <div ref={scrollRef} className="scroll-area relative flex-1 overflow-y-auto overscroll-contain lg:overflow-visible">
+          <Routes>
+            <Route path="/" element={<HomeScreen onShop={() => navigate('/productos')} onOpen={goDetail} />} />
+            <Route path="/productos" element={<CatalogScreen onOpen={goDetail} onShop={() => navigate('/productos')} />} />
+            <Route
+              path="/productos/:id"
+              element={
+                <ProductRoute
+                  qty={detailQty}
+                  setQty={setDetailQty}
+                  onAdd={(id) => {
+                    addToCart(id, detailQty)
+                    navigate('/carrito')
+                  }}
+                />
+              }
             />
-          )}
-          {screen === 'cart' && (
-            <CartScreen
-              lines={lines}
-              subtotal={subtotal}
-              setQty={setQty}
-              onShop={goCatalog}
-              onContinue={() => {
-                setScreen('checkout')
-                scrollTop()
-              }}
+            <Route
+              path="/carrito"
+              element={
+                <CartScreen
+                  lines={lines}
+                  subtotal={subtotal}
+                  setQty={setQty}
+                  onShop={() => navigate('/productos')}
+                  onContinue={() => navigate('/checkout')}
+                />
+              }
             />
-          )}
-          {screen === 'checkout' && (
-            <CheckoutScreen
-              customer={customer}
-              setCustomer={setCustomer}
-              fulfillment={fulfillment}
-              setFulfillment={setFulfillment}
-              zone={zone}
-              setZone={setZone}
-              subtotal={subtotal}
-              shipping={shipping}
-              total={total}
-              onContinue={() => {
-                setScreen('payment')
-                scrollTop()
-              }}
+            <Route
+              path="/checkout"
+              element={
+                <CheckoutScreen
+                  customer={customer}
+                  setCustomer={setCustomer}
+                  fulfillment={fulfillment}
+                  setFulfillment={setFulfillment}
+                  zone={zone}
+                  setZone={setZone}
+                  subtotal={subtotal}
+                  shipping={shipping}
+                  total={total}
+                  onContinue={() => navigate('/checkout/pago')}
+                />
+              }
             />
-          )}
-          {screen === 'payment' && (
-            <PaymentScreen
-              payment={payment}
-              setPayment={setPayment}
-              total={total}
-              receipt={receipt}
-              setReceipt={setReceipt}
-              onPay={confirmOrder}
+            <Route
+              path="/checkout/pago"
+              element={
+                <PaymentScreen
+                  payment={payment}
+                  setPayment={setPayment}
+                  total={total}
+                  receipt={receipt}
+                  setReceipt={setReceipt}
+                  onPay={confirmOrder}
+                />
+              }
             />
-          )}
-          {screen === 'confirmation' && confirmedOrder && (
-            <ConfirmationScreen
-              orderId={orderId}
-              lines={confirmedOrder.lines}
-              total={confirmedOrder.total}
-              payment={payment}
-              fulfillment={fulfillment}
-              zone={zone}
-              customer={customer}
-              onHome={() => {
-                setScreen('home')
-                scrollTop()
-              }}
+            <Route
+              path="/pedido/:id"
+              element={
+                <OrderRoute
+                  orderId={orderId}
+                  order={confirmedOrder}
+                  payment={payment}
+                  fulfillment={fulfillment}
+                  zone={zone}
+                  customer={customer}
+                  onHome={() => navigate('/')}
+                />
+              }
             />
-          )}
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
         </div>
 
-        {/* add-to-cart toast */}
         {justAdded && (
           <div className="animate-pop pointer-events-none absolute bottom-6 left-1/2 z-40 -translate-x-1/2 rounded-full bg-shalom-forest px-5 py-2.5 text-sm font-semibold text-white shadow-xl lg:fixed">
             ✓ Agregado al carrito
@@ -189,26 +178,53 @@ export default function App() {
         )}
 
         <WhatsAppFab
-          bottom={
-            screen === 'cart' && cartCount > 0
-              ? 232
-              : screen === 'detail' ||
-                  screen === 'checkout' ||
-                  screen === 'payment'
-                ? 104
-                : 24
-          }
+          bottom={screen === 'cart' && cartCount > 0
+            ? 232
+            : screen === 'detail' || screen === 'checkout' || screen === 'payment'
+              ? 104
+              : 24}
         />
       </div>
     </div>
   )
+}
 
-  function goCatalog() {
-    setScreen('catalog')
-    scrollTop()
-  }
-  function backFrom(s: Screen) {
-    setScreen(previousScreen(s))
-    scrollTop()
-  }
+function ProductRoute({ qty, setQty, onAdd }: {
+  qty: number
+  setQty: (qty: number) => void
+  onAdd: (id: string) => void
+}) {
+  const { id } = useParams()
+  const box = BOXES.find((product) => product.id === id)
+
+  if (!box) return <Navigate to="/productos" replace />
+
+  return <DetailScreen box={box} qty={qty} setQty={setQty} onAdd={() => onAdd(box.id)} />
+}
+
+function OrderRoute({ orderId, order, payment, fulfillment, zone, customer, onHome }: {
+  orderId: string
+  order: ConfirmedOrder | null
+  payment: PaymentMethod
+  fulfillment: Fulfillment
+  zone: string
+  customer: Customer
+  onHome: () => void
+}) {
+  const { id } = useParams()
+
+  if (!order || id !== orderId) return <Navigate to="/" replace />
+
+  return (
+    <ConfirmationScreen
+      orderId={id}
+      lines={order.lines}
+      total={order.total}
+      payment={payment}
+      fulfillment={fulfillment}
+      zone={zone}
+      customer={customer}
+      onHome={onHome}
+    />
+  )
 }

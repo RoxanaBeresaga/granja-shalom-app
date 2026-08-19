@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react'
+
 export default function QtyBtn({
   children,
   onClick,
@@ -14,4 +16,3 @@ export default function QtyBtn({
     </button>
   )
 }
-
