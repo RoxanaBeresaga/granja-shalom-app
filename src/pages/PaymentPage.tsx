@@ -11,6 +11,7 @@ export default function PaymentScreen({
   receipt,
   setReceipt,
   onPay,
+  isSubmitting = false,
 }: {
   payment: PaymentMethod
   setPayment: (p: PaymentMethod) => void
@@ -18,6 +19,7 @@ export default function PaymentScreen({
   receipt: string | null
   setReceipt: (r: string | null) => void
   onPay: () => void
+  isSubmitting?: boolean
 }) {
   const [mpState, setMpState] = useState<'idle' | 'redirecting' | 'success'>(
     'idle',
@@ -232,15 +234,17 @@ export default function PaymentScreen({
         </div>
         <PrimaryButton
           onClick={payment === 'mp' ? startMp : onPay}
-          disabled={payment === 'transfer' && !receipt}
+          disabled={(payment === 'transfer' && !receipt) || isSubmitting}
         >
-          {payment === 'mp'
-            ? 'Pagar con Mercado Pago'
-            : payment === 'transfer'
-              ? receipt
-                ? 'Confirmar pedido'
-                : 'Subí tu comprobante para continuar'
-              : 'Confirmar pedido'}
+          {isSubmitting
+            ? 'Procesando...'
+            : payment === 'mp'
+              ? 'Pagar con Mercado Pago'
+              : payment === 'transfer'
+                ? receipt
+                  ? 'Confirmar pedido'
+                  : 'Subí tu comprobante para continuar'
+                : 'Confirmar pedido'}
         </PrimaryButton>
       </div>
     </div>

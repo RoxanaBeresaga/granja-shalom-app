@@ -13,6 +13,8 @@ import PaymentScreen from './pages/PaymentPage'
 import DetailScreen from './pages/ProductDetailPage'
 import type { CartLine, ConfirmedOrder, Customer, Fulfillment, PaymentMethod } from './types'
 import { backPath, screenFromPath, screenTitle } from './utils/navigation'
+import { supabase } from './lib/supabase'
+import { createOrder } from './lib/orders'
 
 export default function App() {
   const navigate = useNavigate()
@@ -28,6 +30,7 @@ export default function App() {
   const [receipt, setReceipt] = useState<string | null>(null)
   const [confirmedOrder, setConfirmedOrder] = useState<ConfirmedOrder | null>(null)
   const [orderId] = useState(() => 'GS-' + Math.floor(1000 + Math.random() * 9000))
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const scrollRef = useRef<HTMLDivElement>(null)
 
   const cartCount = cart.reduce((count, line) => count + line.qty, 0)
@@ -49,6 +52,10 @@ export default function App() {
       window.scrollTo(0, 0)
     })
   }, [location.pathname])
+
+  useEffect(() => {
+    console.log('Supabase client successfully initialized:', supabase)
+  }, [])
 
   const goDetail = (id: string) => {
     setDetailQty(1)
@@ -75,10 +82,19 @@ export default function App() {
       : previous.map((line) => line.boxId === id ? { ...line, qty } : line),
     )
 
-  const confirmOrder = () => {
-    setConfirmedOrder({ lines, total })
-    setCart([])
-    navigate(`/pedido/${orderId}`)
+  const confirmOrder = async () => {
+    setIsSubmitting(true)
+    try {
+      await createOrder(orderId, customer, fulfillment, zone, payment, subtotal, shipping, total, lines)
+      setConfirmedOrder({ lines, total })
+      setCart([])
+      navigate(`/pedido/${orderId}`)
+    } catch (error) {
+      console.error(error)
+      alert('Hubo un error al guardar el pedido. Por favor intentá nuevamente.')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -150,6 +166,7 @@ export default function App() {
                   receipt={receipt}
                   setReceipt={setReceipt}
                   onPay={confirmOrder}
+                  isSubmitting={isSubmitting}
                 />
               }
             />
