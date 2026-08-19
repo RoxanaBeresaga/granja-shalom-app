@@ -45,9 +45,16 @@ export default function ConfirmationScreen({
           <span className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-shalom-lime/40 px-3 py-1.5 text-sm font-semibold text-shalom-forest">
             ● Pago aprobado
           </span>
-        ) : (
+        ) : payment === 'transfer' ? (
           <span className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-shalom-clay-soft px-3 py-1.5 text-sm font-semibold text-shalom-clay">
             ● Pago pendiente
+          </span>
+        ) : (
+          <span className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-shalom-lime/40 px-3 py-1.5 text-sm font-semibold text-shalom-forest">
+            ●{' '}
+            {fulfillment === 'pickup'
+              ? 'Pago en efectivo al retirar'
+              : 'Pago en efectivo al recibir'}
           </span>
         )}
       </div>
@@ -100,7 +107,11 @@ export default function ConfirmationScreen({
         <div className="flex justify-between">
           <span className="text-white/60">Pago</span>
           <span className="font-semibold text-white">
-            {payment === 'mp' ? 'Mercado Pago' : 'Transferencia'}
+            {payment === 'mp'
+              ? 'Mercado Pago'
+              : payment === 'transfer'
+                ? 'Transferencia'
+                : 'Efectivo'}
           </span>
         </div>
       </div>
@@ -110,7 +121,9 @@ export default function ConfirmationScreen({
         <span>
           {payment === 'mp'
             ? 'Ya coordinamos todo. Te avisaremos por WhatsApp cuando tu caja esté lista.'
-            : 'Te avisaremos por WhatsApp apenas confirmemos tu pago. ¡Gracias por elegir producción local!'}
+            : payment === 'transfer'
+              ? 'Te avisaremos por WhatsApp apenas confirmemos tu pago. ¡Gracias por elegir producción local!'
+              : 'Te escribiremos por WhatsApp para coordinar la entrega y el pago en efectivo.'}
         </span>
       </div>
 

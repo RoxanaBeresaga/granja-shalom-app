@@ -139,6 +139,29 @@ export default function PaymentScreen({
         </div>
       </button>
 
+      <button
+        onClick={() => setPayment('cash')}
+        className={`w-full rounded-2xl border-2 p-4 text-left transition-all ${
+          payment === 'cash'
+            ? 'border-shalom-leaf bg-white shadow-md'
+            : 'border-transparent bg-white/60'
+        }`}
+      >
+        <div className="flex items-center gap-3">
+          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-shalom-mist text-lg">
+            💵
+          </span>
+          <div>
+            <div className="font-display font-bold text-shalom-forest">
+              Efectivo
+            </div>
+            <div className="text-sm text-shalom-ink/60">
+              Pagás al retirar o recibir tu caja
+            </div>
+          </div>
+        </div>
+      </button>
+
       {payment === 'transfer' && (
         <div className="animate-rise space-y-3 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-black/5">
           <div>
@@ -213,9 +236,11 @@ export default function PaymentScreen({
         >
           {payment === 'mp'
             ? 'Pagar con Mercado Pago'
-            : receipt
-              ? 'Confirmar pedido'
-              : 'Subí tu comprobante para continuar'}
+            : payment === 'transfer'
+              ? receipt
+                ? 'Confirmar pedido'
+                : 'Subí tu comprobante para continuar'
+              : 'Confirmar pedido'}
         </PrimaryButton>
       </div>
     </div>

@@ -4,8 +4,7 @@ export type Screen = 'home' | 'catalog' | 'detail' | 'cart' | 'checkout' | 'paym
 export type CartLine = { boxId: string; qty: number }
 export type Customer = { name: string; phone: string; email: string }
 export type Fulfillment = 'pickup' | 'delivery'
-export type PaymentMethod = 'mp' | 'transfer'
+export type PaymentMethod = 'mp' | 'transfer' | 'cash'
 export type OrderLine = { box: Box; qty: number }
 export type ConfirmedOrder = { lines: OrderLine[]; total: number }
 export type DeliveryZone = { id: string; label: string; cost: number }
-
