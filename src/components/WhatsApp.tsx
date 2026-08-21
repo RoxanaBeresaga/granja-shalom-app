@@ -13,7 +13,7 @@ export default function WhatsAppFab({ bottom }: { bottom: number }) {
   const [open, setOpen] = useState(false)
   return (
     <div
-      style={{ bottom }}
+      style={{ bottom: `calc(${bottom}px + env(safe-area-inset-bottom, 0px))` }}
       className="absolute right-4 z-40 flex flex-col items-end gap-3 transition-[bottom] duration-300 lg:fixed lg:!bottom-6 lg:right-6"
     >
       {open && (

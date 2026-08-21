@@ -98,8 +98,8 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen w-full bg-shalom-cream lg:bg-[#d9e4cf] lg:p-6">
-      <div className="relative mx-auto flex h-screen w-full flex-col overflow-hidden bg-shalom-cream lg:h-auto lg:min-h-[calc(100vh-3rem)] lg:max-w-[1440px] lg:overflow-visible lg:rounded-[2rem] lg:shadow-2xl lg:ring-1 lg:ring-black/5">
+    <div className="min-h-dvh w-full bg-shalom-cream lg:min-h-screen lg:bg-[#d9e4cf] lg:p-6">
+      <div className="relative mx-auto flex h-dvh w-full flex-col overflow-hidden bg-shalom-cream lg:h-auto lg:min-h-[calc(100vh-3rem)] lg:max-w-[1440px] lg:overflow-visible lg:rounded-[2rem] lg:shadow-2xl lg:ring-1 lg:ring-black/5">
         <Header
           title={screenTitle(screen)}
           onBack={screen === 'home' ? undefined : () => navigate(backPath(screen))}
